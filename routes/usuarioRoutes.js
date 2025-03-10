@@ -6,4 +6,5 @@ router.get('/', usuarioController.getUsers);
 router.post('/', usuarioController.addUser);
 router.put('/:id', usuarioController.updateUser); //le decimos que recibe parametro
 router.post("/ChangeStatus/:id", usuarioController.changeUserStatus);
+
 module.exports = router;
