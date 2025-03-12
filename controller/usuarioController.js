@@ -1,4 +1,5 @@
 const { Usuario } = require("../models");
+const bycrypt = require('bcryptjs');
 
 const getUsers = async (req, res) => {
     try {
@@ -11,8 +12,10 @@ const getUsers = async (req, res) => {
 
 const addUser = async (req, res) => {
     try {
-        const { nombre, email } = req.body;
-        const usuario = await Usuario.create({ nombre, email });
+        const { nombre, email, password} = req.body;
+        const hashContrsena = await bycrypt.hash(password, 10);
+
+        const usuario = await Usuario.create({ nombre, email, password: hashContrsena });
         return res.status(200).json(usuario);
     } catch (error) {
         return res.status(500).json({ error: error.message });
@@ -22,7 +25,7 @@ const addUser = async (req, res) => {
 const updateUser = async (req, res) => {
     try {
         const { id } = req.params;
-        const { nombre, email } = req.body;
+        const { nombre, email, password } = req.body;
         const usuario = await Usuario.findByPk(id);
         if (!usuario) {
             return res.status(404).json({ message: "Usuario no encontrado" });
@@ -30,6 +33,7 @@ const updateUser = async (req, res) => {
 
         if(nombre) usuario.nombre = nombre;
         if(email) usuario.email = email;
+        if(password) usuario.password = password;
 
         await usuario.save();
 
